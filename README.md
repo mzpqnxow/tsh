@@ -1,9 +1,32 @@
+## Tiny SHell - An open-source UNIX backdoor, written by Christophe Devine
+
+### https://github.com/mzpqnxow/tsh
+
+This is a fork of the fork by creaktive with a focus on portability and convenience
+
+  * Restored the portability feature of defaulting to /bin/sh (busybox, AIX, HP-UX, IRIX, many Solaris need this)
+  * Added simple way to avoid using a login shell at all (via MINIMAL=1 ./tsh)
+  * Added a way to explicitly specify Bash if you really want to (via BASH=1 ./tsh)
+  * Since creaktive's default of using /bin/bash was removed in my fork, it caused Debian derived systems to break since dash doesn't handle --login, fixed using /bin/sh -l (via DASH=1 ./tsh)
+
+#### TODO
+  * Add statically built executables for MIPS and ARM variants
+  * Add a simple tool to hotpatch the passphrase into the binaries
 
 
+### https://github.com/creaktive/tsh
+  * Added iPhone buildability and a usage function
+  * Redid the Makefile
+  * Upgraded the ciphers
+
+
+### Original tsh version 0.6
+
+```
                  Tiny SHell - An open-source UNIX backdoor
 
 
-    * Before compiling Tiny SHell
+    Before compiling Tiny SHell
 
         1. First of all, you should setup your secret key, which
            is located in tsh.h; the key can be of any length (use
@@ -70,4 +93,4 @@
         that no one except you has read access to these two files.
         However, you may choose not to store the real (valid) key in
         the client, which will then ask for a password when it starts.
-
+```

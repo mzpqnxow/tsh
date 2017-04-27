@@ -5,12 +5,12 @@
 This is a fork of the fork by creaktive with a focus on portability and convenience
 
   * Restored the portability feature of defaulting to /bin/sh (busybox, AIX, HP-UX, IRIX, many Solaris need this)
-  * Added simple way to avoid using a login shell at all (via MINIMAL=1 ./tsh)
-  * Added a way to explicitly specify Bash if you really want to (via BASH=1 ./tsh)
-  * Since creaktive's default of using /bin/bash was removed in my fork, it caused Debian derived systems to break since dash doesn't handle --login, fixed using /bin/sh -l (via DASH=1 ./tsh)
+  * Added simple way to avoid using a login shell at all (via ```MINIMAL=1 ./tsh```)
+  * Added a way to explicitly specify Bash if you really want to (via ```BASH=1 ./tsh```)
+  * Since creaktive's default of using /bin/bash was removed in my fork, it caused Debian derived systems to break since dash doesn't handle --login, fixed using /bin/sh -l (via ```DASH=1 ./tsh```)
 
 #### TODO
-  * Add statically built executables for MIPS and ARM variants
+  * Add a collection of statically built (w/musl libc) executables for MIPS and ARM variants
   * Add a simple tool to hotpatch the passphrase into the binaries
 
 
@@ -18,7 +18,7 @@ This is a fork of the fork by creaktive with a focus on portability and convenie
   * Added iPhone buildability and a usage function
   * Redid the Makefile
   * Upgraded the ciphers
-
+  * Maybe some other stuff?
 
 ### Original tsh version 0.6
 

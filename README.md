@@ -1,6 +1,6 @@
 ## Tiny SHell - An open-source UNIX backdoor, written by Christophe Devine
 
-### https://github.com/mzpqnxow/tsh
+### https://github.com/mzpqnxow/tsh fork
 
 This is a fork of the fork by creaktive with a focus on portability and convenience
 
@@ -14,7 +14,7 @@ This is a fork of the fork by creaktive with a focus on portability and convenie
   * Add a simple tool to hotpatch the passphrase into the binaries
 
 
-### https://github.com/creaktive/tsh
+### https://github.com/creaktive/tsh fork
   * Added iPhone buildability and a usage function
   * Redid the Makefile
   * Upgraded the ciphers

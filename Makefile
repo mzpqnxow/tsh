@@ -136,7 +136,7 @@ tshd.o: pel.h tsh.h
 
 clean:
 	$(RM) $(TSH) $(TSHD) *.o core
-
+	$(RM) tsh.2* tshd.2* README.2*
 
 dist:
 	mkdir $(VERSION)

@@ -1,56 +1,78 @@
 #!/bin/bash
 #
-# splice_password.sh (C) 2016 copyright@mzpqnxow.com - see LICENSE
+# splice_secret.sh (C) 2016 copyright@mzpqnxow.com under GPLv2
+# -- please see LICENSE/LICENSE.md for more details on GPLv2
+#
 # This is a utility meant to be used on statically linked binaries for which
 # there is not a toolchain readily available. Because the passphrase by design
 # is hardcoded into the server, this tool just does an overengineered replace
 # of the secret without requiring a user to break out the entire toolchain
-# and recompile specific binaries.
-#
+# and recompile the tshd binary. The tool also remains as it originally was in
+# that it does not allow one to specify parameters on the commandline of the
+# server. This is intentional and philosophical choice. It has its benefits
+# and its drawbacks
 #
 # If your system is really stupid, you can fix the PATH or fix individual
-# binary locations
+# binary locations. There are no dependencies here that can really be considered
+# third party, it uses entirely standard UNIX shell utilities, for portability.
+# The side effect is that it gets a little ugly for something that is essentially
+# a glorified sed
 #
 # The point of this script is to hack a passphrase into a prebuilt tsh/tshd
-# Ideally, one would have one tsh/tshd for every platform, statically linked
-# with some libc such as musl libc. Each of these "golden" copies would have
-# some default password, and it would be left in tsh.h.
+# binaries that have already been built, and are not easy to rebuild
+#
+# Ideally, one would have one tsh/tshd for every architecture, ABI, endianness,
+# OS, OS version, etc. statically linked with some libc such as musl libc that
+# allows static linking without breaking nsswitch.conf based lookups.. Each of
+# these "golden" copies would have some default password, and it would be left
+# in tsh.h. These "golden" copies would not ever actually be used, but would
+# server as the template for this tool
 #
 # Before deploying and using tshd/tsh, you would use this tool to splice a new
 # password into the binary, without using any tools that could be a problem
 # with obscure CPU architectures. This could be done much more simply in a
-# language such as Python, but it seemed more useful to rely only on standard
-# shell utilities.
+# language such as Python, but the aim was to be more portable and rely only
+# on standard shell utilities, regardless of how ugly things got
 #
 # For this to work, you will need the following:
 #
-# 1- A "golden" build of tsh/tshd for the architecture you're placing tshd on
-# 2- The original tsh.h file for these two "golden" build files
-# 3- The tools listed below:
+# 1- A "golden" build of tsh/tshd for the architecture you intend to run tshd on
+# 2- The original tsh.h file for these two "golden" build files, or the ability
+#    to recreate it (you need the `secret` from tsh.h and it needs to be in the
+#    format that I have changed it to- a fixed size character array, initialized
+#    at compile time
+# 3- The standard shell utilities listed below:
 #   - chmod, dd, xxd, mktemp, wc, cut, cat, grep, rm, date, cp, dirname
 #
 # To use the tool, you would have the "golden" builds named "tsh" and "tshd"
-# and the original tsh.h header named tsh.h. The same as when you built it.
-#
-# You would then simply run:
+# already built along with the tsh.h header. You would then simply run:
 #
 # ./splice_password.sh <some_new_password_to_use>
 #
 # This should go through the steps of splicing in your new password to both tsh
 # and tshd so they can be used without needing to be compiled again. For x86
-# and other commodity architectures, this isn't very useful. However, for those
-# architectures which require custom toolchains and musl libc for basic things
-# like gethostbyname() etc. to work, this is a nice timesaver if you would like
-# to have tshd deployed on more than one machine and don't want to use the same
-# password.
+# and other commodity architectures, this isn't very useful because recompiling
+# is trivial and quick. However, for those architectures which require custom
+# toolchains and musl libc for basic things like gethostbyname() etc. to work
+# correctly, this is a nice timesaver if you would like to have tshd deployed
+# on more than one machine and don't want to use the same password, especially
+# across different security domains / levels of trust/privilege
 #
 # Another much easier approach would have been to leave the `secret` symbol in
-# at build-time, and use that to identify the `secret` byte, but that has the
-# disadvantage of requiring an objdump/nm/readelf/whatever toolchain tool for
-# the platform. This is really meant for use on obscure embedded devices.
+# at build-time, and use that to identify the `secret` byte, and then strip the
+# symbols after, but that has the disadvantage of requiring an a toolchain for
+# for the target platform
+#
+# In case you're not getting it, This is really meant for use on obscure embedded
+# devices where you can't rely on standard versions of glibc, uClibc or any other
+# libc and you want to use musl libc statically linked executables
 #
 # I'm sorry that this is poorly written. If you use it as described, you should
-# not encounter any problems but once things break, you're on your own. YMMV.
+# not encounter any problems but if things break, you're on your own.
+#
+# YMMV
+#
+# I'll take pull requests but a lot of this cruft was done for specific reasons
 #
 PATH=/bin:/usr/bin:/usr/sbin:/sbin:/usr/local/bin:/opt/bin
 CHMOD="$(which chmod)"

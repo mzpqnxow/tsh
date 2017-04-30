@@ -9,6 +9,7 @@ This fork, licensed by copyright@mzpqnxow.com, is released under the GPLv2. See 
 
 This is a fork of the fork by creaktive with a focus on portability and convenience
 
+  * Added splice_secret.sh to hotpatch existing binaries with new secrets, useful for deploying statically linked binaries with obscure toolchains that are painful to rebuild, and when it's not secure to use the same password for all instances of tshd (if you're using it on 2 security domains)
   * Restored the portability feature of defaulting to /bin/sh (busybox, AIX, HP-UX, IRIX, many Solaris need this)
   * Restored the more 'old school' way of the server, not accepting any arguments and being fairly opaque about what it even is (just minimal obfuscation)
   * Added simple way to avoid using a login shell at all (via ```MINIMAL=1 ./tsh```)

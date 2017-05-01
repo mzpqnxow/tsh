@@ -36,9 +36,9 @@ struct pel_context send_ctx;    /* to encrypt outgoing data */
 struct pel_context recv_ctx;    /* to decrypt incoming data */
 
 unsigned char challenge[16] =   /* version-specific */
+  "\x20\xad\xfa\x1f\xd1\x16\x25\x06" \
+  "\x4d\xdf\xbe\x11\x9f\x3d\xc8\x3b";
 
-    "\x58\x90\xAE\x86\xF1\xB9\x1C\xF6" \
-    "\x29\x83\x95\x71\x1D\xDE\x58\x0D";
 
 unsigned char buffer[BUFSIZE + 16 + 20];
 

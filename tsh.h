@@ -1,8 +1,9 @@
 #ifndef _TSH_H
 #define _TSH_H
 
-char secret[65] = "ZQQZZQQZAAAAAAAAAAAAAAAAAAAAAdswj4AAAAAAAAAAAAAAAAAAAAAAAQZZQQZZ";
-
+                /* Remember to leave a byte for the terminating NULL */
+                /* 0123456789abcdef0123456789abcdef0123456789abcdef01234567890abcde */
+char *secret = "DEFAULTDEFAULTDEFAULTDEFAULTDEF";
 #define SERVER_PORT 9999
 
 /*

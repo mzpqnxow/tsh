@@ -72,6 +72,8 @@ int main( int argc, char **argv )
     struct hostent *client_host;
 
 #endif
+    (void)(argv);
+    (void)(argc);
 
     /* fork into background */
 
